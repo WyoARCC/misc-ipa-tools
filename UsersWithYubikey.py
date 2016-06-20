@@ -1,12 +1,12 @@
 #!/usr/bin/python
 
-# IpaVsGetent.py
+# UsersWithYubikey.py
 # Jeremy Clay
-# June 6, 2016
+# June 20, 2016
 # 
 # 
-# script that searches the server and reports the uid and fax numbers
-# associated with any users that have fax numbers associated to their accounts
+# script that searches the server and reports the uid and Yubikey numbers
+# associated with any users that have Yubikeys associated to their accounts
 # 
 # The ipa client will determine which server to connect to in this order:
 #
@@ -30,48 +30,48 @@ def getUserList():
 
 
 # function that takes a list of users, and returns a list of 
-# users that have facsimile numbers associated with their accounts
-def getUsersWithFaxList(list):
-	usersWithFax = []
+# users that have Yubikeys associated with their accounts
+def getUsersWithYubiList(list):
+	usersWithKey = []
 
 	for user in list:
 		returnValue = user.find('facsimileTelephoneNumber')
 		
 		if returnValue != -1:
-			usersWithFax.append(user)
+			usersWithKey.append(user)
 
-	return usersWithFax
+	return usersWithKey
 
 
 # function that takes in a user and returns a string of the following form
-# 	'<uid>: "<fax#1>, <fax#2>, ..."'
-def getUsernameAndFax(user):
+# 	'<uid>: "<key#1>, <key#2>, ..."'
+def getUsernameAndYubikey(user):
 	user = user.split('\n')
 
 	numFax = 0
-	usernameAndFax = ""
+	usernameAndKey = ""
 	for attribute in user:
 		if attribute.find('uid:') != -1:
-			usernameAndFax = usernameAndFax + attribute.split(":")[1].strip() + ':"'
+			usernameAndKey = usernameAndKey + attribute.split(":")[1].strip() + ':"'
 		
 		elif attribute.find('facsimileTelephoneNumber') != -1:
 			numFax += 1
 			if numFax > 1:
-				usernameAndFax = usernameAndFax + ',' + attribute.split(":")[1].strip()
+				usernameAndKey = usernameAndKey + ',' + attribute.split(":")[1].strip()
 			else:
-				usernameAndFax = usernameAndFax + attribute.split(":")[1].strip()
+				usernameAndKey = usernameAndKey + attribute.split(":")[1].strip()
 
-	usernameAndFax = usernameAndFax + '"'
+	usernameAndKey = usernameAndKey + '"'
 
-	return usernameAndFax
+	return usernameAndKey
 
 
-# function that creates the final list of uids and fax numbers to be reported
+# function that creates the final list of uids and Yubikeys to be reported
 def getFinalList(list):
 	finalList = []
 
 	for user in list:
-		finalList.append(getUsernameAndFax(user))
+		finalList.append(getUsernameAndYubikey(user))
 
 	return finalList
 
@@ -85,12 +85,12 @@ def printList(list):
 # call function to create a list of all of the users on the server
 users = getUserList()
 
-# extract only the users with a fax number associated to them
-usersWithFax = getUsersWithFaxList(users)
+# extract only the users with a Yubikey associated to them
+usersWithYubikey = getUsersWithYubiList(users)
 
-# create a final list with only the uids and fax numbers
-finalList = getFinalList(usersWithFax)
+# create a final list with only the uids and Yubikeys
+finalList = getFinalList(usersWithYubikey)
 
 # display script results
-print 'There are %s users with a fax number' % len(finalList)
+print 'There are %s users with a Yubikey' % len(finalList)
 printList(finalList)
