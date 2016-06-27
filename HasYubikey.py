@@ -42,7 +42,7 @@ def hasYubikey(userName):
 		print "'%s' is not a valid user name" % userName
 		exit(1)
 	
-	# assign the user and all of their attributes as a list
+	# assign the user and all of their attributes as a list, 'user'
 	user = ipaResults.split('\n')
 
 	yubikeys =[] # list to hold the yubikey numbers

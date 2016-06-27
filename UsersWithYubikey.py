@@ -36,8 +36,8 @@ def getUsersWithYubiList(list):
 
 	for user in list:
 		returnValue = user.find('facsimileTelephoneNumber')
-		
-		if returnValue != -1:
+		# a return value of -1 indicates that the user.find() function failed
+		if returnValue != -1: # did NOT fail
 			usersWithKey.append(user)
 
 	return usersWithKey
@@ -52,9 +52,11 @@ def getUsernameAndYubikey(user):
 	usernameAndKey = ""
 	for attribute in user:
 		if attribute.find('uid:') != -1:
+			# append the user's unique id to the string 'usernameAndKey'
 			usernameAndKey = usernameAndKey + attribute.split(":")[1].strip() + ':"'
 		
 		elif attribute.find('facsimileTelephoneNumber') != -1:
+			# append the Yubikey number[s] to the string 'usernameAndKey'
 			numFax += 1
 			if numFax > 1:
 				usernameAndKey = usernameAndKey + ',' + attribute.split(":")[1].strip()
